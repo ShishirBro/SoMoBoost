@@ -1,0 +1,97 @@
+var geometry = 
+    /* color: #98ff00 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-84.74862609838767, 38.08390839023231],
+          [-84.74862609838767, 38.07269289452417],
+          [-84.73575149511619, 38.07269289452417],
+          [-84.73575149511619, 38.08390839023231]]], null, false);
+// Define parameters
+var targetScale = 10; // 10m resolution
+
+// Use your predefined geometry
+//var geometry = ee.Geometry(/* YOUR GEOMETRY DEFINITION HERE */);
+var aoi = geometry.bounds(); // Get bounding box of your geometry
+
+// Find first available Sentinel-1 date in 2024
+var s1Collection = ee.ImageCollection('COPERNICUS/S1_GRD')
+  .filterBounds(aoi)
+  .filterDate('2024-01-01', '2024-12-31')
+  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
+  .filter(ee.Filter.eq('instrumentMode', 'IW'));
+
+var firstDate = ee.Date(s1Collection.aggregate_min('system:time_start'));
+var targetDate = firstDate.format('YYYY-MM-dd');
+print('First available Sentinel-1 date:', targetDate);
+
+// Function to process and resample images
+var processImage = function(image) {
+  return image
+    .resample('bilinear')
+    .reproject('EPSG:4326', null, targetScale)
+    .clip(aoi);
+};
+
+// Get and process data with type casting
+var s1 = s1Collection.filterDate(firstDate, firstDate.advance(1, 'day')).first();
+var s1Processed = processImage(s1.select(['VV', 'VH', 'angle'])).toFloat();
+
+var chirps = ee.ImageCollection('UCSB-CHG/CHIRPS/DAILY')
+  .filterDate(firstDate, firstDate.advance(1, 'day'))
+  .first();
+var chirpsProcessed = processImage(chirps.select('precipitation')).toFloat();
+
+var elevation = ee.Image('USGS/SRTMGL1_003').select('elevation');
+var elevationProcessed = processImage(elevation).toFloat();
+
+// Combine all bands with consistent data type
+var multiBand = ee.Image.cat([
+  s1Processed,
+  chirpsProcessed,
+  elevationProcessed
+]).rename(['VV', 'VH', 'angle', 'precipitation', 'elevation']);
+
+// Handle NoData values and final type conversion
+var multiBandFinal = multiBand
+  .unmask(-9999)  // Set null values to -9999
+  .toFloat();
+
+// Validation
+print('Band types:', multiBandFinal.bandTypes());
+print('Sample values:', multiBandFinal.reduceRegion({
+  reducer: ee.Reducer.first(),
+  geometry: aoi.centroid({maxError: 1}),
+  scale: 1000,
+  maxPixels: 1e9,
+  bestEffort: true
+}));
+
+// Visualization parameters
+var visParams = {
+  bands: ['VV', 'VH', 'precipitation'],
+  min: [-25, -35, 0],
+  max: [0, -5, 50],
+  gamma: 1.2
+};
+
+// Display results
+Map.centerObject(aoi, 9);
+Map.addLayer(multiBandFinal, visParams, 'Multi-band Image');
+
+// Export with consistent data types
+Export.image.toDrive({
+  image: multiBandFinal,
+  description: 'FrankFort_Lexington_Multiband_2024',
+  scale: targetScale,
+  region: aoi,
+  maxPixels: 1e13,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
