@@ -1,7 +1,7 @@
 # SoMoBoost
 
 ## Overview  
-This project involves downloading and preprocessing soil moisture data from various sources (in-situ measurements, satellite imagery, and precipitation/elevation datasets), followed by training a machine learning model using Gradient Boosting Regressor to predict soil moisture at 5 cm, 15 cm, and 75 cm depths. The model leverages remote sensing input features, including:  
+This project involves downloading and preprocessing soil moisture data from various sources (in-situ measurements, satellite imagery, and precipitation/elevation datasets), followed by training a machine learning model using Extreme Gradient Boosting and Support Vector Regressor to predict soil moisture at 5 cm, 10 cm, 20 cm, 50 cm and 100 cm depths. The model leverages remote sensing input features, including:  
 
 - VV [dB]  
 - VH [dB]  
