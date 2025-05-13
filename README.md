@@ -75,19 +75,22 @@ Lastly, I would like to acknowledge my supervisor, Prof. Dr. Venkatesh Merwade, 
 
 ### 7. The results of Feature Engineering:
 ![Correlation Matrix](Results/correlation_matrix.png)  
-![SHAP Summary - SM 5 cm](Results/SHAP_summary_SOIL_MOISTURE_5_DAILY.png)  
-![SHAP Summary - SM 15 cm](Results/SHAP_summary_SOIL_MOISTURE_15_DAILY.png)  
-![SHAP Summary - SM 75 cm](Results/SHAP_summary_SOIL_MOISTURE_75_DAILY.png)
+![SHAP Summary - SM 5 cm](SoMoBoost/Results/XGboost_SHAP_summary_SOIL_MOISTURE_5_DAILY.png)  
+![SHAP Summary - SM 50 cm](SoMoBoost/Results/XGboost_SHAP_summary_SOIL_MOISTURE_50_DAILY.png)  
+![SHAP Summary - SM 100 cm](SoMoBoost/Results/XGboost_SHAP_summary_SOIL_MOISTURE_100_DAILY.png)
 
 ### 8. The results of Model Training look like this: 
-![Observed vs Predicted - SM 5 cm](Results/Observed_vs_Predicted_SOIL_MOISTURE_5_DAILY.png)  
-![Observed vs Predicted - SM 15 cm](Results/Observed_vs_Predicted_SOIL_MOISTURE_15_DAILY.png)  
-![Observed vs Predicted - SM 75 cm](Results/Observed_vs_Predicted_SOIL_MOISTURE_75_DAILY.png)
+![Observed vs Predicted - SM 5 cm](SoMoBoost/Results/XGboost_Observed_vs_Predicted_SOIL_MOISTURE_5_DAILY.png)  
+![Observed vs Predicted - SM 50 cm](SoMoBoost/Results/XGboost_Observed_vs_Predicted_SOIL_MOISTURE_50_DAILY.png)  
+![Observed vs Predicted - SM 100 cm](SoMoBoost/Results/XGboost_Observed_vs_Predicted_SOIL_MOISTURE_100_DAILY.png)
 
 ### 9. The results of predicted Soil Moisture Just Based on the input Features look like this:
-![InSitu Comparison - SM 5 cm](Results/InSitu_Comparison_5_cm.png)  
-![InSitu Comparison - SM 15 cm](Results/InSitu_Comparison_15_cm.png)  
-![InSitu Comparison - SM 75 cm](Results/InSitu_Comparison_75_cm.png)
+![InSitu Comparison - XGboost](SoMoBoost/Results/XGboost_Soil_Moisture_Prediction_All_Depths.png)  
+![InSitu Comparison - SVR](SoMoBoost/Results/SVR_InSitu_Comparison_All_Depths.png)  
+
+### 10. As the results of 100 cm from XGboost had very high feature relationship with DEM. We tried to see how well it resembles.
+![DEM_SM Comparison - XGboost](SoMoBoost/Results/DEM_XGboost_100cm.png)  
+
 
 
 ## Notes  
